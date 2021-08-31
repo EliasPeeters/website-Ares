@@ -6,7 +6,7 @@ app.get('/attributes', (req, res) => {
     let attributes = JSON.parse(fs.readFileSync('assets/data.json'));
     let url = '';
     if (server == 'external') {
-        url = 'https://eliaspeeters.de/ares/'
+        url = 'https://eliaspeeters.de/ares/assets/'
     }
 
     for (let element in attributes) {
