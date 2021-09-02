@@ -11,6 +11,7 @@ app.use('/ares/assets', express.static('assets'))
 // Routes
 let statusRoute = require('./routes/status');
 let attributesRoute = require('./routes/attributes');
+let paperRoute = require('./routes/paper');
 
 const port = 8088;
 app.listen(port, console.log(`Running on ${port}`))

@@ -1,7 +1,9 @@
 {
     "socialMedia": {
-        "name": "Social Media und Politik",
+        "name": "socialMedia",
+        "heading": "Social Media und Politik",
         "image": "socialMedia.jpg",
-        "description": "Dies ist ein Test"
+        "description": "Dies ist ein Test",
+        "date": "16. Februar 2021"
     }
 }

@@ -4,7 +4,7 @@ app.get('/attributes', (req, res) => {
     console.log(req.body)
     let server = req.body.server == undefined? 'external':req.body.server;    
     let attributes = JSON.parse(fs.readFileSync('assets/data.json'));
-    let url = '';
+    let url = 'https://eliaspeeters.de/ares/assets/images/';
     if (server == 'external') {
         url = 'https://eliaspeeters.de/ares/assets/images/'
     }
