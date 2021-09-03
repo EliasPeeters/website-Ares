@@ -5,7 +5,8 @@
   "main": "website-Ares.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-local": "node website-Ares.js"
+    "start-local": "node website-Ares.js",
+    "start-live": "git reset --hard; git pull; npm i; forever restart website-Ares.js"
   },
   "repository": {
     "type": "git",
