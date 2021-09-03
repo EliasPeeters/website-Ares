@@ -137,6 +137,7 @@ app.get('/paper/:name', (req, res) => {
     res.send({
         paper: data,
         heading: attributes[name].heading,
-        date: attributes[name].date
+        date: attributes[name].date,
+        authors: attributes[name].authors
     })
 })
