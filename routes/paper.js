@@ -1,7 +1,36 @@
-let fs = require('fs')
+let fs = require('fs');
+let cite = require('citation-js');
+const bibtexParse = require('bibtex-parse');
+const { BibEntry } = require('bibtex');
 
-function parsePaperData(data) {
-    
+let bibBlackList = ['TITLE', 'URL', 'key'];
+
+function loadBib(name) {
+    let data = fs.readFileSync(`papers/${name}Bib.bib`, {encoding:'utf8'});
+    let bib = bibtexParse.entries(data);
+    return bib;
+}
+
+function searchForBibEntry(bib, key) {
+    for (element in bib) {
+        if (bib[element].key == key) {
+            return bib[element]
+        }
+    }
+    return {TITLE: key};
+}
+
+function removeBackslashFromString(string) {
+    if (string == undefined) {
+        return undefined
+    }
+    while (string.indexOf('\\') != -1) {
+        string = [string.substring(0, string.indexOf('\\')), string.substring(string.indexOf('\\') + 1, string.length)].join('');
+    }
+    return string;
+}
+
+function parsePaperData(data, bib) {
     let dataSub = data;
     let firstFunction = true;
     let x = 0;
@@ -49,7 +78,16 @@ function parsePaperData(data) {
             case 'autocite':
                 let content = `{name: ${functionParam}}`
                 //console.log(content)
-                let functionCall = `openPaperPopUp(event,'${functionParam}', '${functionParam}')`
+                let bibEntry = searchForBibEntry(bib, functionParam);
+                let bibEntryArray = []
+                for (element in bibEntry) {
+                    if (!bibBlackList.includes(element)) {
+                        bibEntryArray.push(`${element.toLowerCase()}: ${removeBackslashFromString(bibEntry[element])}`);
+                    }
+                }
+                let bibEntryString = "`" + bibEntryArray.join("`, `") + "`";
+                //console.log(bibEntryString)
+                let functionCall = `openPaperPopUp(event,'${functionParam}', '${bibEntry.TITLE}', [${bibEntryString}], '${bibEntry.URL}')`;
                 dataSub = [dataSub.substring(0, dataSub.indexOf("\\")), `<b class="${functionParam}" onclick="${functionCall}" onmouseover="${functionCall}">[Q]</b>`, dataSub.substring(nextClosingCurlyBracket+1, dataSub.lenght)].join('')
                 break;
             case 'glqq':
@@ -88,16 +126,17 @@ app.get('/paper/:name', (req, res) => {
     let name = req.params.name;
 
     let attributes = JSON.parse(fs.readFileSync('assets/data.json'));
-
+    let bib = loadBib(name)
     if (attributes[name] == undefined) {
         res.send('Paper does not exist');
         return;
     } 
     let data = fs.readFileSync(`papers/${name}.tex`, {encoding:'utf8'});
-    data = parsePaperData(data)
+    searchForBibEntry(bib, 'ParteienspektrumD')
+    data = parsePaperData(data, bib)
     res.send({
         paper: data,
-        heading: 'Social Media und Politik',
+        heading: attributes[name].heading,
         date: attributes[name].date
     })
 })

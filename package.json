@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/EliasPeeters/website-Ares#readme",
   "dependencies": {
+    "bibtex": "^0.9.0",
+    "bibtex-parse": "^2.1.0",
     "body-parser": "^1.19.0",
+    "citation-js": "^0.5.1",
     "express": "^4.17.1"
   }
 }
