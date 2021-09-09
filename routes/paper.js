@@ -8,6 +8,7 @@ let bibBlackList = ['TITLE', 'URL', 'key'];
 function loadBib(name) {
     let data = fs.readFileSync(`papers/${name}Bib.bib`, {encoding:'utf8'});
     let bib = bibtexParse.entries(data);
+    console.log(bib);
     return bib;
 }
 
