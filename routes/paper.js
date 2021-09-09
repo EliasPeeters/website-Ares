@@ -8,7 +8,6 @@ let bibBlackList = ['TITLE', 'URL', 'key'];
 function loadBib(name) {
     let data = fs.readFileSync(`papers/${name}Bib.bib`, {encoding:'utf8'});
     let bib = bibtexParse.entries(data);
-    console.log(bib);
     return bib;
 }
 
@@ -89,7 +88,11 @@ function parsePaperData(data, bib) {
                 let bibEntryString = "`" + bibEntryArray.join("`, `") + "`";
                 //console.log(bibEntryString)
                 let functionCall = `openPaperPopUp(event,'${functionParam}', '${bibEntry.TITLE}', [${bibEntryString}], '${bibEntry.URL}')`;
-                dataSub = [dataSub.substring(0, dataSub.indexOf("\\")), `<b class="${functionParam}" onclick="${functionCall}" onmouseover="${functionCall}">[Q]</b>`, dataSub.substring(nextClosingCurlyBracket+1, dataSub.lenght)].join('')
+                let bTag = `<b class="${functionParam}" onclick="${functionCall}" onmouseover="${functionCall}">[Q]</b>`;
+                if (functionParam.substring(0,3) == 'fig') {
+                    bTag = ''
+                }
+                dataSub = [dataSub.substring(0, dataSub.indexOf("\\")), bTag , dataSub.substring(nextClosingCurlyBracket+1, dataSub.lenght)].join('')
                 break;
             case 'glqq':
                 dataSub = [dataSub.substring(0, dataSub.indexOf("\\")), `"`, dataSub.substring(dataSub.indexOf("\\")+6, dataSub.lenght)].join('')
