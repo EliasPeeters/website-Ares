@@ -32,6 +32,7 @@ function removeBackslashFromString(string) {
 
 function parsePaperData(data, bib) {
     let dataSub = data;
+    let headings = [];
     let firstFunction = true;
     let x = 0;
     while (dataSub.indexOf("\\") != -1) {
@@ -69,11 +70,19 @@ function parsePaperData(data, bib) {
 
         switch(functionName) {
             case 'section': 
-                let insertString = firstFunction? `<h3>${functionParam}</h3><p>`: `</p><h3>${functionParam}</h3><p>`;
+                let insertString = firstFunction? `<h3 class="heading">${functionParam}</h3><p>`: `</p><h3 class="heading">${functionParam}</h3><p>`;
+                headings.push({
+                    name: functionParam,
+                    type: 'h3'
+                })
                 dataSub = [dataSub.substring(0, dataSub.indexOf("\\")), insertString, dataSub.substring(nextClosingCurlyBracket+1, dataSub.lenght)].join('')
                 break;
             case 'subsection': 
-                dataSub = [dataSub.substring(0, dataSub.indexOf("\\")), `</p><h4>${functionParam}</h4><p>`, dataSub.substring(nextClosingCurlyBracket+1, dataSub.lenght)].join('')
+                dataSub = [dataSub.substring(0, dataSub.indexOf("\\")), `</p><h4 class="heading">${functionParam}</h4><p>`, dataSub.substring(nextClosingCurlyBracket+1, dataSub.lenght)].join('')
+                headings.push({
+                    name: functionParam,
+                    type: 'h4'
+                })
                 break;
             case 'autocite':
                 let content = `{name: ${functionParam}}`
@@ -121,9 +130,10 @@ function parsePaperData(data, bib) {
         dataSub = [dataSub.substring(0, dataSub.indexOf('<p></p>')), dataSub.substring(dataSub.indexOf('<p></p>')+7, dataSub.length)].join('')
     }
 
-    // dataSub = dataSub + '</p>'
-    return dataSub;
-
+    return {
+        data: dataSub,
+        headings: headings
+    };
 }
 
 app.get('/paper/:name', (req, res) => {
@@ -137,11 +147,16 @@ app.get('/paper/:name', (req, res) => {
     } 
     let data = fs.readFileSync(`papers/${name}.tex`, {encoding:'utf8'});
     searchForBibEntry(bib, 'ParteienspektrumD')
-    data = parsePaperData(data, bib)
-    res.send({
-        paper: data,
-        heading: attributes[name].heading,
-        date: attributes[name].date,
-        authors: attributes[name].authors
+    data = parsePaperData(data, bib);
+    console.log(data.headings)
+    res.render(`paperContent`, {headings: data.headings}, (err, html) => {
+        res.send({
+            paper: data.data,
+            heading: attributes[name].heading,
+            date: attributes[name].date,
+            authors: attributes[name].authors,
+            headings: html
+        })
     })
+    
 })

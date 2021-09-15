@@ -6,6 +6,7 @@ app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.set('view engine', 'ejs')
 app.use('/ares/assets', express.static('assets'))
 
 // Routes

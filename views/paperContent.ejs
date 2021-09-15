@@ -1,0 +1,31 @@
+<% headings.forEach(function(item, index) { %>
+    <% if (item.type == 'h4') { %>
+        <p onmousedown="scrollToElement(<%= index %>)" class="subSection"><%= item.name %></p>
+    <% } else if (item.type == 'h3') { %>
+        <p onmousedown="scrollToElement(<%= index %>)" class="section"><%= item.name %></p>
+    <% } %>
+<% }) %>
+
+<script>
+    function SmoothVerticalScrolling(e, time, where) {
+        var eTop = e.getBoundingClientRect().top - 100;
+        var eAmt = eTop / 100;
+        var curTime = 0;
+        while (curTime <= time) {
+            window.setTimeout(SVS_B, curTime, eAmt, where);
+            curTime += time / 100;
+        }
+    }
+
+    function SVS_B(eAmt, where) {
+        if(where == "center" || where == "")
+            window.scrollBy(0, eAmt / 2);
+        if (where == "top")
+            window.scrollBy(0, eAmt);
+    }
+
+    function scrollToElement(index) {
+        let element = document.getElementsByClassName('heading')[index]
+        SmoothVerticalScrolling(element, 300, 'top')
+    }
+</script>
